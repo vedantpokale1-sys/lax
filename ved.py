@@ -1,43 +1,8 @@
 import sys
 
+from utils import calculate, print_lines, read_number, read_text
+
 print("im the boss")
-
-
-def read_number(prompt):
-    while True:
-        try:
-            raw = input(prompt)
-        except EOFError:
-            raise SystemExit("no input available, exiting")
-        except KeyboardInterrupt:
-            raise SystemExit("cancelled by user")
-        try:
-            return float(raw)
-        except ValueError:
-            print(f"'{raw}' is not a number, try again", file=sys.stderr)
-
-
-def read_text(prompt):
-    try:
-        return input(prompt)
-    except EOFError:
-        raise SystemExit("no input available, exiting")
-    except KeyboardInterrupt:
-        raise SystemExit("cancelled by user")
-
-
-def calculate(a, b, operator):
-    if operator == "+":
-        return a + b
-    if operator == "-":
-        return a - b
-    if operator == "*":
-        return a * b
-    if operator == "/":
-        if b == 0:
-            raise ZeroDivisionError("cannot divide by zero")
-        return a / b
-    raise ValueError(f"invalid operator: {operator!r}")
 
 
 def main():
@@ -52,9 +17,11 @@ def main():
         print(exc, file=sys.stderr)
         return 1
 
-    print("this is my calculator")
-    print("this is for only testing not fina;")
-    print("im vedant ")
+    print_lines(
+        "this is my calculator",
+        "this is for only testing not fina;",
+        "im vedant ",
+    )
     return 0
 
 
