@@ -17,6 +17,15 @@ def read_number(prompt):
             print(f"'{raw}' is not a number, try again", file=sys.stderr)
 
 
+def read_text(prompt):
+    try:
+        return input(prompt)
+    except EOFError:
+        raise SystemExit("no input available, exiting")
+    except KeyboardInterrupt:
+        raise SystemExit("cancelled by user")
+
+
 def calculate(a, b, operator):
     if operator == "+":
         return a + b
@@ -32,14 +41,10 @@ def calculate(a, b, operator):
 
 
 def main():
+    read_text("my name is the vedant")
     a = read_number("enter the first number: ")
     b = read_number("enter the second number: ")
-    try:
-        operator = input("choose the following operator (+, -, *, /): ")
-    except EOFError:
-        raise SystemExit("no input available, exiting")
-    except KeyboardInterrupt:
-        raise SystemExit("cancelled by user")
+    operator = read_text("choose the following operator (+, -, *, /): ")
 
     try:
         print(calculate(a, b, operator))
