@@ -1,46 +1,62 @@
+import sys
+
+print("im the boss")
+
+
 def read_number(prompt):
     while True:
         try:
-            return float(input(prompt))
+            raw = input(prompt)
+        except EOFError:
+            raise SystemExit("no input available, exiting")
+        except KeyboardInterrupt:
+            raise SystemExit("cancelled by user")
+        try:
+            return float(raw)
         except ValueError:
-            print("that is not a number, try again")
+            print(f"'{raw}' is not a number, try again", file=sys.stderr)
+
+
+def read_text(prompt):
+    try:
+        return input(prompt)
+    except EOFError:
+        raise SystemExit("no input available, exiting")
+    except KeyboardInterrupt:
+        raise SystemExit("cancelled by user")
 
 
 def calculate(a, b, operator):
-    """Return the result of applying operator to a and b, or None if unknown."""
     if operator == "+":
         return a + b
-    elif operator == "-":
+    if operator == "-":
         return a - b
-    elif operator == "*":
+    if operator == "*":
         return a * b
-    elif operator == "/":
+    if operator == "/":
+        if b == 0:
+            raise ZeroDivisionError("cannot divide by zero")
         return a / b
-    else:
-        return None
-
-
-def format_result(a, b, operator):
-    if operator == "/" and b == 0:
-        return "cannot divide by zero"
-    result = calculate(a, b, operator)
-    if result is None:
-        return "invalid operator"
-    return str(result)
+    raise ValueError(f"invalid operator: {operator!r}")
 
 
 def main():
-    print("im the boss")
-    name = input("my name is the vedant")
+    read_text("my name is the vedant")
     a = read_number("enter the first number: ")
     b = read_number("enter the second number: ")
-    operator = input("choose the following operator (+, -, *, /): ")
-    print(format_result(a, b, operator))
+    operator = read_text("choose the following operator (+, -, *, /): ")
+
+    try:
+        print(calculate(a, b, operator))
+    except (ValueError, ZeroDivisionError) as exc:
+        print(exc, file=sys.stderr)
+        return 1
 
     print("this is my calculator")
     print("this is for only testing not fina;")
-    print("im vedant ", name)
+    print("im vedant ")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
