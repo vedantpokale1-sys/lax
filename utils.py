@@ -10,13 +10,13 @@ OPERATIONS = {
 }
 
 
-def read_int(prompt):
-    """Ask for a number until the answer can be parsed as an int."""
+def read_number(prompt):
+    """Ask for a number until the answer can be parsed as a float."""
     while True:
         try:
-            return int(input(prompt))
+            return float(input(prompt))
         except ValueError:
-            print("that is not a whole number, try again")
+            print("that is not a number, try again")
 
 
 def read_operator(prompt):
