@@ -46,6 +46,24 @@ def test_format_result_invalid_operator():
     assert ved.format_result(2, 3, "?") == "invalid operator"
 
 
+def test_format_result_divide_by_zero_is_guarded():
+    assert ved.format_result(1, 0, "/") == "cannot divide by zero"
+    assert ved.format_result(1, 0, "+") == "1"
+
+
+def test_read_number_parses_float(monkeypatch):
+    monkeypatch.setattr(builtins, "input", lambda *args: "2.5")
+    assert ved.read_number("n: ") == 2.5
+
+
+def test_read_number_reprompts_until_valid(monkeypatch, capsys):
+    answers = iter(["abc", "", "7"])
+    monkeypatch.setattr(builtins, "input", lambda *args: next(answers))
+
+    assert ved.read_number("n: ") == 7.0
+    assert capsys.readouterr().out.count("that is not a number, try again") == 2
+
+
 def test_main_reads_inputs_and_prints_result(monkeypatch, capsys):
     answers = iter(["vedant", "7", "3", "-"])
     monkeypatch.setattr(builtins, "input", lambda *args: next(answers))
@@ -54,7 +72,7 @@ def test_main_reads_inputs_and_prints_result(monkeypatch, capsys):
 
     out = capsys.readouterr().out
     assert "im the boss" in out
-    assert "4" in out
+    assert "4.0" in out
     assert "this is my calculator" in out
     assert "vedant" in out
 
@@ -68,9 +86,21 @@ def test_main_with_invalid_operator(monkeypatch, capsys):
     assert "invalid operator" in capsys.readouterr().out
 
 
-def test_main_rejects_non_numeric_input(monkeypatch):
-    answers = iter(["vedant", "abc"])
+def test_main_reprompts_on_non_numeric_input(monkeypatch, capsys):
+    answers = iter(["vedant", "abc", "7", "3", "+"])
     monkeypatch.setattr(builtins, "input", lambda *args: next(answers))
 
-    with pytest.raises(ValueError):
-        ved.main()
+    ved.main()
+
+    out = capsys.readouterr().out
+    assert "that is not a number, try again" in out
+    assert "10.0" in out
+
+
+def test_main_divide_by_zero(monkeypatch, capsys):
+    answers = iter(["vedant", "7", "0", "/"])
+    monkeypatch.setattr(builtins, "input", lambda *args: next(answers))
+
+    ved.main()
+
+    assert "cannot divide by zero" in capsys.readouterr().out
